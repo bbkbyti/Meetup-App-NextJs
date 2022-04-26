@@ -1,11 +1,18 @@
 
+
+// each meetup item has : title, image, address, and a description. and a show detail button in the end.
+
 const MeetupItem = (props) => {
     return (
         <>
-            <h1>
-                MeetUp Item information goes here.
-            </h1>
+            <div>
+                <img src={props.image} alt={props.title} />
+            </div>
+            <div>
+                <h3>{props.title}</h3>
+                <address>{props.address}</address>
+            </div>
         </>
     )
 }
-export default MeetupItem;ß
+export default MeetupItem;
