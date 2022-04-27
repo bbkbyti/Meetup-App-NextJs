@@ -3,6 +3,8 @@
 import { useRef } from 'react';
 import classes from './NewMeetupForm.module.css';
 
+import Card from '../ui/Card';
+
 
 
 const NewMeetupForm = (props) => {
@@ -32,7 +34,7 @@ const NewMeetupForm = (props) => {
 
 
     return (
-        <>
+        <Card>
             <form className={classes.form} onSubmit={submitHandler}>
                 <div className={classes.control}>
                     <label htmlFor='title'>Meetup Title</label>
@@ -59,7 +61,7 @@ const NewMeetupForm = (props) => {
                     <button>Add Meetup</button>
                 </div>
             </form>
-        </>
+        </Card>
     )
 }
 export default NewMeetupForm;
