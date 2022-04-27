@@ -1,45 +1,69 @@
+
+import { MongoClient, ObjectId } from "mongodb";
+
 import MeetupDetails from "../../components/meetups/MeetupDetails";
 
 
 
-const MeetupDetail = () => {
+const MeetupDetail = (props) => {
     return (
-        <MeetupDetails />
+        <MeetupDetails
+            image={props.meetupData.image}
+            title={props.meetupData.title}
+            address={props.meetupData.address}
+            description={props.meetupData.description}
+        />
     )
 }
 
 export async function getStaticPaths() {
+    const client = await MongoClient.connect('mongodb+srv://bbkbyti:0UvqGJe9ZzUrzIgg@cluster0.dnwbk.mongodb.net/meetups?retryWrites=true&w=majority');
+
+    const db = client.db();
+
+    const meetupsCollection = db.collection('meetups');
+
+    const meetups = await meetupsCollection.find({}, { _id: 1 }).toArray();
+
+    client.close();
+
+
     return {
         fallback: 'blocking',
-        paths: [
-            {
-                params: {
-                    meetupId: 'm1',
-                }
-            },
-            { 
-                params: {
-                    meetupId: 'm2',
-                }
-            }
-        ]
+        paths: meetups.map((meetup) => ({
+            params: { meetupId: meetup._id.toString() }
+        })),
     }
 }
 
 export async function getStaticProps(context) {
 
-    const meetupId = context.params;
-    console.log(meetupId);
+    const meetupId = context.params.meetupId;
+
+    const client = await MongoClient.connect('mongodb+srv://bbkbyti:0UvqGJe9ZzUrzIgg@cluster0.dnwbk.mongodb.net/meetups?retryWrites=true&w=majority');
+
+    const db = client.db();
+
+    const meetupsCollection = db.collection('meetups');
+
+    const selectedMeetup = await meetupsCollection.findOne({
+        _id: ObjectId(meetupId),
+    })
+
+    client.close();
+
+
+
 
 
     return {
         props: {
             meetupData: {
-                image: 'https://imageio.forbes.com/specials-images/imageserve/5e5bacb7d378190007f4b3eb/Istanbul-views/0x0.jpg?fit=crop&format=jpg&crop=2121,1193,x0,y107,safe',
-                id: meetupId,
-                title: 'first meetup',
-                address: 'Eminonu sahil, Istanbul',
-                description: 'First Meeting in Istanbul'
+                id: selectedMeetup._id.toString(),
+                title: selectedMeetup.title,
+                image: selectedMeetup.image,
+                address: selectedMeetup.address,
+                description: selectedMeetup.description,
             }
         }
     }
